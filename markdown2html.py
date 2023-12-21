@@ -36,25 +36,26 @@ def convert_markdown_to_html(input_md_file, output_html_file):
                 in_list = False
                 html_lines.append("</ul>")
             html_lines.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
+
         elif line.startswith("- "):
             # Start or continue an unordered list
             if not in_list:
                 in_list = True
                 html_lines.append("<ul>")
-            html_lines.extend(process_unordered_list([line]))
+            html_lines.append(f"    <li>{line.lstrip('- ').strip()}</li>")
+
         else:
             if in_list:
                 in_list = False
-                html_lines.extend(process_unordered_list([line]))
-            else:
-                html_lines.append(line)
+                html_lines.append("</ul>")
+            html_lines.append(line)
 
     # Close the unordered list if still open
     if in_list:
         html_lines.append("</ul>")
 
     # Combine lines into HTML with each tag on a new line
-    html_content = "\n".join(html_lines) + "\n"
+    html_content = "\n".join(line for line in html_lines if line.strip()) + "\n"
 
     with open(output_html_file, 'w', encoding='utf-8') as file:
         file.write(html_content)
