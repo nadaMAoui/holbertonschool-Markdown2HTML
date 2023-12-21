@@ -25,3 +25,4 @@ if __name__ == "__main__":
                 file.write(html)
             else:
                 file.write(f"{line}\n")
+
