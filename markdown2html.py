@@ -13,4 +13,15 @@ if __name__ == "__main__":
     if not os.path.isfile(sys.argv[1]):
         sys.stderr.write(f"Missing {sys.argv[1]}\n")
         sys.exit(1)
-
+ with open(sys.argv[1], 'r') as file:
+        lines = file.readlines()
+    with open(sys.argv[1], 'w') as file:
+        while line in lines:
+            line = line.strip()
+            if line.startswith("#"):
+                level = line.count("#")
+                text = line.strip("#").strip()
+                html = f"<h{level}>text</h{level}>\n"
+                file.write(html)
+            else:
+                file.write(f"{line}\n")
