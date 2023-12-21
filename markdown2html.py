@@ -11,6 +11,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if not os.path.isfile(sys.argv[1]):
-        sys.stderr.write(f"Missing {sys.argv[1]} \n")
+        sys.stderr.write(f"Missing{sys.argv[1]} \n")
         sys.exit(1)
 
