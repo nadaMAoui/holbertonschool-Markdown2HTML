@@ -16,7 +16,7 @@ if __name__ == "__main__":
     with open(sys.argv[1], 'r') as file:
         lines = file.readlines()
     with open(sys.argv[1], 'w') as file:
-        while line in lines:
+        for line in lines:
             line = line.strip()
             if line.startswith("#"):
                 level = line.count("#")
