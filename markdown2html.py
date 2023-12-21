@@ -5,28 +5,56 @@ import sys
 import os
 
 
+def process_unordered_list(lines):
+    html_lines = ["<ul>"]
+
+    for line in lines:
+        list_item = line.lstrip("- ").strip()
+        html_lines.append(f"    <li>{list_item}</li>")
+
+    html_lines.append("</ul>")
+    return html_lines
+
+
 def convert_markdown_to_html(input_md_file, output_html_file):
     with open(input_md_file, 'r', encoding='utf-8') as file:
         markdown_content = file.read()
 
-    html_lines = []
-
     # Split the Markdown content into lines
     lines = markdown_content.split('\n')
+
+    html_lines = []
+
+    in_list = False
 
     for line in lines:
         # Check for headings
         if line.startswith("#"):
             heading_level = line.count("#")
             heading_text = line.lstrip("#").strip()
+            if in_list:
+                in_list = False
+                html_lines.append("</ul>")
             html_lines.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
+        elif line.startswith("- "):
+            # Start or continue an unordered list
+            if not in_list:
+                in_list = True
+                html_lines.append("<ul>")
+            html_lines.extend(process_unordered_list([line]))
         else:
-            # Preserve line breaks and treat other lines as paragraphs
-            if line.strip():  # Ignore empty lines
+            if in_list:
+                in_list = False
+                html_lines.extend(process_unordered_list([line]))
+            else:
                 html_lines.append(line)
 
-    # Combine lines into HTML
-    html_content = "\n".join(html_lines) + "\n"  # Add a newline at the end
+    # Close the unordered list if still open
+    if in_list:
+        html_lines.append("</ul>")
+
+    # Combine lines into HTML with each tag on a new line
+    html_content = "\n".join(html_lines) + "\n"
 
     with open(output_html_file, 'w', encoding='utf-8') as file:
         file.write(html_content)
