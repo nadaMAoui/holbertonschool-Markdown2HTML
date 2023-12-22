@@ -46,7 +46,8 @@ def convert_markdown_to_html(input_md_file, output_html_file):
             if in_ordered_list:
                 in_ordered_list = False
                 html_lines.append("</ol>")
-            html_lines.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
+            html_lines.append(
+                f"<h{heading_level}>{heading_text}</h{heading_level}>")
 
         elif line.startswith("* "):
             # Start or continue an ordered list
@@ -67,7 +68,8 @@ def convert_markdown_to_html(input_md_file, output_html_file):
         html_lines.append("</ol>")
 
     # Combine lines into HTML with each tag on a new line, excluding empty lines
-    html_content = "\n".join(line for line in html_lines if line.strip()) + "\n"
+    html_content = "\n".join(
+        line for line in html_lines if line.strip()) + "\n"
 
     with open(output_html_file, 'w', encoding='utf-8') as file:
         file.write(html_content)
