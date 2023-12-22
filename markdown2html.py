@@ -9,7 +9,7 @@ def process_ordered_list(lines):
     html_lines = ["<ol>"]
 
     for line in lines:
-        list_item = line.lstrip("- ").strip()
+        list_item = line.split(". ", 1)[1].strip()
         html_lines.append(f"    <li>{list_item}</li>")
 
     html_lines.append("</ol>")
@@ -36,39 +36,38 @@ def convert_markdown_to_html(input_md_file, output_html_file):
 
     html_lines = []
 
-    in_list = False
+    in_ordered_list = False
 
     for line in lines:
         # Check for headings
         if line.startswith("#"):
             heading_level = line.count("#")
             heading_text = line.lstrip("#").strip()
-            if in_list:
-                in_list = False
-                html_lines.append("</ul>")
-            html_lines.append(
-                f"<h{heading_level}>{heading_text}</h{heading_level}>")
+            if in_ordered_list:
+                in_ordered_list = False
+                html_lines.append("</ol>")
+            html_lines.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
 
-        elif line.startswith("- "):
-            # Start or continue an unordered list
-            if not in_list:
-                in_list = True
-                html_lines.append("<ul>")
-            html_lines.append(f"    <li>{line.lstrip('- ').strip()}</li>")
+        elif line.startswith("* "):
+            # Start or continue an ordered list
+            if not in_ordered_list:
+                in_ordered_list = True
+                html_lines.append("<ol>")
+            html_lines.append(f"    <li>{line.lstrip('* ').strip()}</li>")
 
         else:
-            if in_list:
-                in_list = False
-                html_lines.append("</ul>")
-            html_lines.append(line)
+            if in_ordered_list:
+                if line.strip():
+                    html_lines.append(f"    <li>{line.strip()}</li>")
+            else:
+                html_lines.append(line)
 
-    # Close the unordered list if still open
-    if in_list:
-        html_lines.append("</ul>")
+    # Close the ordered list if still open
+    if in_ordered_list:
+        html_lines.append("</ol>")
 
-    # Combine lines into HTML with each tag on a new line
-    html_content = "\n".join(
-        line for line in html_lines if line.strip()) + "\n"
+    # Combine lines into HTML with each tag on a new line, excluding empty lines
+    html_content = "\n".join(line for line in html_lines if line.strip()) + "\n"
 
     with open(output_html_file, 'w', encoding='utf-8') as file:
         file.write(html_content)
