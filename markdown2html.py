@@ -5,6 +5,17 @@ import sys
 import os
 
 
+def process_ordered_list(lines):
+    html_lines = ["<ol>"]
+
+    for line in lines:
+        list_item = line.lstrip("- ").strip()
+        html_lines.append(f"    <li>{list_item}</li>")
+
+    html_lines.append("</ol>")
+    return html_lines
+
+
 def process_unordered_list(lines):
     html_lines = ["<ul>"]
 
@@ -35,7 +46,8 @@ def convert_markdown_to_html(input_md_file, output_html_file):
             if in_list:
                 in_list = False
                 html_lines.append("</ul>")
-            html_lines.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
+            html_lines.append(
+                f"<h{heading_level}>{heading_text}</h{heading_level}>")
 
         elif line.startswith("- "):
             # Start or continue an unordered list
@@ -55,7 +67,8 @@ def convert_markdown_to_html(input_md_file, output_html_file):
         html_lines.append("</ul>")
 
     # Combine lines into HTML with each tag on a new line
-    html_content = "\n".join(line for line in html_lines if line.strip()) + "\n"
+    html_content = "\n".join(
+        line for line in html_lines if line.strip()) + "\n"
 
     with open(output_html_file, 'w', encoding='utf-8') as file:
         file.write(html_content)
